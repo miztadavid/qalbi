@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Qalbi — A Farewell Letter</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cormorant Garamond, Lora & Pinyon Script for timeless heirloom stationery -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <!-- Tone.js for melancholic felt piano + soft rain soundscape -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        body: ['"Lora"', 'Georgia', 'serif'],
+                        script: ['"Pinyon Script"', 'cursive'],
+                    },
+                    colors: {
+                        linenBg: '#EFE7DC',
+                        linenDark: '#DFD3C3',
+                        paperCream: '#F4E8D4',
+                        paperAged: '#E5D3B3',
+                        inkCharcoal: '#241811',
+                        inkMuted: '#5E493A',
+                        burgundyWax: '#7A1C24',
+                        burgundyDeep: '#4F1016',
+                        roseDried: '#5C1D24',
+                        goldMuted: '#B08D57',
+                        charredEdge: '#241409',
+                    },
+                    boxShadow: {
+                        'heirloom': '0 24px 60px -12px rgba(36, 20, 9, 0.35), inset 0 0 28px rgba(46, 24, 10, 0.42)',
+                        'sheet': '0 30px 80px -15px rgba(32, 18, 8, 0.38), inset 0 0 42px rgba(42, 22, 9, 0.48), inset 0 0 12px rgba(24, 11, 4, 0.72)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #DFCDAE;
+            color: #241811;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 50% 25%, #F5ECDC 0%, #DFCDAE 56%, #BFA682 100%);
+        }
+
+        /* Subtle Linen Paper Grain */
+        .linen-grain {
+            background-image: url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.055'/%3E%3C/svg%3E");
+        }
+
+        /* Organic Burnt & Soot-Singed Edge Styling */
+        .burnt-border {
+            border: 1.5px solid #3B2110;
+            box-shadow:
+                inset 0 0 22px rgba(48, 25, 10, 0.55),
+                inset 0 0 6px rgba(24, 10, 3, 0.82),
+                0 16px 40px -10px rgba(30, 16, 6, 0.35);
+        }
+
+        /* 3D Envelope & Flap Physics */
+        .envelope-stage {
+            perspective: 1600px;
+        }
+
+        .envelope-card {
+            background:
+                radial-gradient(ellipse at center, #F5EAD6 48%, #DEC8A4 84%, #8F6339 97%, #3A200E 100%);
+            border: 1.5px solid #3D2210;
+            transform-style: preserve-3d;
+            transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
+        }
+
+        .envelope-flap {
+            transform-origin: top center;
+            backface-visibility: visible;
+            transition: transform 0.75s cubic-bezier(0.32, 0.04, 0.2, 1), z-index 0.2s ease;
+        }
+        .envelope-flap.is-open {
+            transform: rotateX(178deg);
+            z-index: 5;
+        }
+
+        /* Subtle SVG Edge Singe Overlay */
+        .burnt-svg-frame {
+            filter: url(#charred-edge-filter);
+        }
+
+        /* Rising Inner Letter Preview */
+        .inner-letter-card {
+            transform: translateY(0);
+            transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .inner-letter-card.is-rising {
+            transform: translateY(-130px);
+        }
+
+        /* Heart Wax Seal Split & Hover Glow */
+        .wax-seal-btn {
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+        }
+        .group:hover .wax-seal-btn {
+            filter: drop-shadow(0 12px 22px rgba(122, 28, 36, 0.45));
+        }
+        .wax-left, .wax-right {
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+        }
+        .seal-cracked .wax-left {
+            transform: translate(-24px, 16px) rotate(-22deg);
+            opacity: 0;
+        }
+        .seal-cracked .wax-right {
+            transform: translate(24px, 16px) rotate(22deg);
+            opacity: 0;
+        }
+
+        /* Wilted Rose Lift Animation */
+        @keyframes roseBreathe {
+            0%, 100% { transform: rotate(-16deg) translateY(0); }
+            50% { transform: rotate(-13deg) translateY(-2px); }
+        }
+        .dead-rose-envelope {
+            transform-origin: bottom center;
+            animation: roseBreathe 5.5s ease-in-out infinite;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+        }
+        .dead-rose-envelope.is-lifted {
+            transform: translate(-28px, -36px) rotate(-32deg) scale(0.88) !important;
+            opacity: 0 !important;
+        }
+
+        /* Unfolded Heirloom Letter Sheet with Burnt & Singed Perimeter */
+        .stationery-sheet {
+            background-color: #F4E8D4;
+            background-image:
+                /* Burnt & scorched perimeter vignette */
+                radial-gradient(ellipse at center,
+                    rgba(252, 246, 235, 0.94) 48%,
+                    rgba(232, 211, 178, 0.9) 78%,
+                    rgba(158, 112, 66, 0.75) 93%,
+                    rgba(56, 30, 13, 0.9) 100%
+                ),
+                /* Soft realistic letter fold creases */
+                linear-gradient(180deg,
+                    transparent 32.8%,
+                    rgba(92, 62, 36, 0.12) 33.2%,
+                    rgba(255, 252, 245, 0.75) 33.6%,
+                    transparent 34.1%,
+                    transparent 65.8%,
+                    rgba(92, 62, 36, 0.12) 66.2%,
+                    rgba(255, 252, 245, 0.75) 66.6%,
+                    transparent 67.1%
+                );
+            border: 1.5px solid #3B200E;
+        }
+
+        @keyframes unfoldSheet {
+            0% {
+                opacity: 0;
+                transform: perspective(1400px) rotateX(-38deg) scaleY(0.45) translateY(-30px);
+            }
+            65% {
+                opacity: 1;
+                transform: perspective(1400px) rotateX(4deg) scaleY(0.99) translateY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1400px) rotateX(0deg) scaleY(1);
+            }
+        }
+        .sheet-unfolding {
+            transform-origin: top center;
+            animation: unfoldSheet 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Gentle Staggered Paragraph Fade-In */
+        .letter-stagger > * {
+            opacity: 0;
+            animation: fadeUpInk 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .letter-stagger > *:nth-child(1) { animation-delay: 0.25s; }
+        .letter-stagger > *:nth-child(2) { animation-delay: 0.4s; }
+        .letter-stagger > *:nth-child(3) { animation-delay: 0.52s; }
+        .letter-stagger > *:nth-child(4) { animation-delay: 0.64s; }
+        .letter-stagger > *:nth-child(5) { animation-delay: 0.76s; }
+        .letter-stagger > *:nth-child(n+6) { animation-delay: 0.88s; }
+
+        @keyframes fadeUpInk {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Shake for Invalid Birth Month */
+        @keyframes shakeInput {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake-error {
+            animation: shakeInput 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased linen-grain selection:bg-burgundyWax/15 selection:text-inkCharcoal">
+
+    <!-- Hidden SVG Filter for Authentic Organic Burnt Paper Edges -->
+    <svg class="sr-only" width="0" height="0" aria-hidden="true">
+        <defs>
+            <filter id="charred-edge-filter" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="4" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Subtle Floating Dust & Soft Rain Canvas -->
+    <canvas id="atmosphere-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- =====================================================================
+         MINIMAL TOP HEADER
+         ===================================================================== -->
+    <header class="relative z-20 w-full max-w-4xl mx-auto px-5 sm:px-8 pt-6 pb-2 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-burgundyWax/80"></span>
+            <span class="font-display italic text-2xl sm:text-3xl text-inkCharcoal tracking-wide">
+                For Qalbi
+            </span>
+        </div>
+
+        <button id="audio-btn" type="button" aria-label="Toggle melancholic piano and rain" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-paperCream/90 backdrop-blur-sm border border-[#B59E80] text-xs font-body text-inkMuted hover:text-inkCharcoal hover:border-inkCharcoal/40 transition-all shadow-sm touch-manipulation">
+            <svg id="audio-icon" class="w-3.5 h-3.5 text-burgundyWax shrink-0 opacity-65 transition-opacity" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <span id="audio-text">Tap for Sound</span>
+        </button>
+    </header>
+
+    <!-- =====================================================================
+         MAIN INTERACTIVE STAGE
+         ===================================================================== -->
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-6 w-full">
+
+        <!-- STAGE 1: REFINED WAX-SEALED ENVELOPE WITH WILTED DEAD ROSE -->
+        <div id="envelope-stage" class="envelope-stage w-full max-w-md mx-auto flex flex-col items-center">
+
+            <p class="text-xs font-body uppercase tracking-[0.22em] text-inkMuted mb-6 text-center">
+                Tap the wax seal to open
+            </p>
+
+            <!-- Envelope Container -->
+            <div class="envelope-card w-full max-w-[340px] sm:max-w-[430px] aspect-[1.48/1] rounded-xl shadow-heirloom relative select-none">
+
+                <!-- Charred Soot Rim Inside Envelope -->
+                <div class="burnt-svg-frame absolute inset-0 rounded-xl border-[3px] border-[#331B0B]/75 pointer-events-none z-30"></div>
+
+                <!-- Folded Stationery Inside Envelope -->
+                <div id="inner-letter-card" class="inner-letter-card absolute inset-x-4 top-3 bottom-3 bg-paperCream border border-[#7D5734] rounded-lg shadow-sm p-5 flex flex-col justify-between z-10 pointer-events-none">
+                    <div class="space-y-1.5 opacity-45">
+                        <div class="h-1.5 bg-burgundyWax/40 rounded-full w-1/3"></div>
+                        <div class="h-2 bg-inkCharcoal/35 rounded-full w-2/3"></div>
+                    </div>
+                    <div class="space-y-2 opacity-40">
+                        <div class="h-1.5 bg-inkCharcoal/30 rounded-full w-4/5"></div>
+                        <div class="h-1.5 bg-inkCharcoal/25 rounded-full w-full"></div>
+                        <div class="h-1.5 bg-inkCharcoal/20 rounded-full w-3/4"></div>
+                    </div>
+                </div>
+
+                <!-- Left, Right, and Bottom Envelope Pocket Folds -->
+                <svg class="absolute inset-0 w-full h-full z-20 pointer-events-none rounded-xl overflow-hidden" viewBox="0 0 430 290" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="pocketLeft" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#8F633A" />
+                            <stop offset="14%" stop-color="#DFCCA9" />
+                            <stop offset="100%" stop-color="#EFE2CA" />
+                        </linearGradient>
+                        <linearGradient id="pocketRight" x1="1" y1="0" x2="0" y2="0">
+                            <stop offset="0%" stop-color="#875C34" />
+                            <stop offset="14%" stop-color="#DAC5A0" />
+                            <stop offset="100%" stop-color="#ECE0C8" />
+                        </linearGradient>
+                        <linearGradient id="pocketBottom" x1="0" y1="1" x2="0" y2="0">
+                            <stop offset="0%" stop-color="#784E29" />
+                            <stop offset="16%" stop-color="#D8C29C" />
+                            <stop offset="100%" stop-color="#F2E6D0" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="0,0 206,150 0,290" fill="url(#pocketLeft)" stroke="#704B2A" stroke-width="1" />
+                    <polygon points="430,0 224,150 430,290" fill="url(#pocketRight)" stroke="#704B2A" stroke-width="1" />
+                    <polygon points="0,290 215,134 430,290" fill="url(#pocketBottom)" stroke="#634022" stroke-width="1.2" />
+                </svg>
+
+                <!-- Top Triangular Envelope Flap -->
+                <div id="envelope-flap" class="envelope-flap absolute inset-x-0 top-0 h-[57%] z-30 pointer-events-none">
+                    <svg class="w-full h-full drop-shadow-[0_6px_12px_rgba(36,20,9,0.24)]" viewBox="0 0 430 165" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="topFlapClean" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#7D522C" />
+                                <stop offset="18%" stop-color="#DECBA8" />
+                                <stop offset="100%" stop-color="#F4E8D3" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="1,1 429,1 215,162" fill="url(#topFlapClean)" stroke="#59381C" stroke-width="1.4" stroke-linejoin="round" />
+                    </svg>
+                </div>
+
+                <!-- Wilted Dead Rose Tucked Beside the Seal -->
+                <svg id="dead-rose-envelope" class="dead-rose-envelope absolute -top-9 left-5 sm:left-8 w-24 sm:w-28 h-40 sm:h-44 pointer-events-none z-40 drop-shadow-[0_8px_12px_rgba(36,20,14,0.24)]" viewBox="0 0 160 240">
+                    <!-- Dried thorny stem -->
+                    <path d="M 88 228 Q 92 165, 76 112 Q 66 80, 56 66" stroke="#4A382B" stroke-width="3" fill="none" stroke-linecap="round" />
+                    <!-- Thorns -->
+                    <path d="M 84 168 L 93 163 L 86 173 Z" fill="#4A382B" />
+                    <path d="M 78 136 L 69 132 L 76 141 Z" fill="#4A382B" />
+                    <path d="M 71 104 L 79 99 L 73 109 Z" fill="#4A382B" />
+                    <!-- Withered dried leaves -->
+                    <path d="M 80 144 Q 108 134, 120 150 Q 102 156, 80 148 Z" fill="#594836" stroke="#3B2F23" stroke-width="0.8" />
+                    <path d="M 74 120 Q 44 114, 34 130 Q 52 134, 74 124 Z" fill="#4D3E2E" stroke="#3B2F23" stroke-width="0.8" />
+                    <!-- Wilted dead crimson-brown rose blossom -->
+                    <g transform="translate(54, 66) rotate(-32)">
+                        <path d="M -8 10 Q -18 22, -10 28 Q -3 20, -2 12 Z" fill="#4A382B" />
+                        <path d="M 8 10 Q 18 22, 10 28 Q 3 20, 2 12 Z" fill="#4A382B" />
+                        <path d="M -22 -4 C -30 -24, -8 -36, 0 -24 C 8 -36, 30 -24, 22 -4 C 24 12, 8 18, 0 16 C -8 18, -24 12, -22 -4 Z" fill="#52191E" stroke="#300B0E" stroke-width="1" />
+                        <path d="M -15 -6 C -18 -22, -4 -28, 0 -18 C 4 -28, 18 -22, 15 -6 C 15 6, 5 11, 0 10 C -5 11, -15 6, -15 -6 Z" fill="#6B2127" stroke="#3D0F13" stroke-width="0.9" />
+                        <path d="M -8 -7 C -10 -17, 10 -17, 8 -7 C 8 2, -8 2, -8 -7 Z" fill="#802830" />
+                        <path d="M -3 -8 C -4 -13, 4 -13, 3 -8 C 3 -4, -3 -4, -3 -8 Z" fill="#330B0F" />
+                    </g>
+                    <!-- Fallen dried petal -->
+                    <path d="M 102 188 Q 116 184, 118 194 Q 106 198, 102 188 Z" fill="#631E24" />
+                </svg>
+
+                <!-- Interactive Tap Area: Heart Wax Seal & Calligraphy Name -->
+                <button id="open-envelope-btn" type="button" aria-label="Open farewell letter" class="absolute inset-0 z-40 w-full h-full cursor-pointer group focus:outline-none touch-manipulation">
+
+                    <!-- Delicate Linen Thread Across Envelope -->
+                    <div id="linen-thread" class="absolute inset-x-0 top-[53%] h-[1.5px] bg-gradient-to-r from-transparent via-[#9E8466]/75 to-transparent transition-opacity duration-500"></div>
+
+                    <!-- Embossed Burgundy Heart Wax Seal ("Q") -->
+                    <div id="wax-seal" class="wax-seal-btn absolute left-1/2 top-[53%] -translate-x-1/2 -translate-y-1/2 w-20 h-20 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                        <svg class="w-full h-full overflow-visible drop-shadow-[0_8px_16px_rgba(64,16,22,0.38)]" viewBox="-34 -30 68 64">
+                            <defs>
+                                <clipPath id="waxClipL">
+                                    <rect x="-40" y="-40" width="40" height="80" />
+                                </clipPath>
+                                <clipPath id="waxClipR">
+                                    <rect x="0" y="-40" width="40" height="80" />
+                                </clipPath>
+                            </defs>
+                            <!-- Left Half -->
+                            <g class="wax-left" clip-path="url(#waxClipL)">
+                                <path d="M 0 -15 C -8 -27, -28 -22, -28 -5 C -28 12, -8 22, 0 31 C 8 22, 28 12, 28 -5 C 28 -22, 8 -27, 0 -15 Z" fill="#591218" />
+                                <path d="M 0 -13 C -7 -23, -24 -19, -24 -4 C -24 10, -7 19, 0 27 C 7 19, 24 10, 24 -4 C 24 -19, 7 -23, 0 -13 Z" fill="#821D26" stroke="#B34750" stroke-width="0.9" />
+                                <path d="M 0 -9 C -6 -17, -18 -14, -18 -2 C -18 8, -6 15, 0 21 C 6 15, 18 8, 18 -2 C 18 -14, 6 -17, 0 -9 Z" fill="#69151D" stroke="#470C11" stroke-width="0.8" />
+                                <text x="0" y="7" text-anchor="middle" fill="#F9EAE6" font-family="Georgia, serif" font-style="italic" font-weight="bold" font-size="16">Q</text>
+                            </g>
+                            <!-- Right Half -->
+                            <g class="wax-right" clip-path="url(#waxClipR)">
+                                <path d="M 0 -15 C -8 -27, -28 -22, -28 -5 C -28 12, -8 22, 0 31 C 8 22, 28 12, 28 -5 C 28 -22, 8 -27, 0 -15 Z" fill="#591218" />
+                                <path d="M 0 -13 C -7 -23, -24 -19, -24 -4 C -24 10, -7 19, 0 27 C 7 19, 24 10, 24 -4 C 24 -19, 7 -23, 0 -13 Z" fill="#821D26" stroke="#B34750" stroke-width="0.9" />
+                                <path d="M 0 -9 C -6 -17, -18 -14, -18 -2 C -18 8, -6 15, 0 21 C 6 15, 18 8, 18 -2 C 18 -14, 6 -17, 0 -9 Z" fill="#69151D" stroke="#470C11" stroke-width="0.8" />
+                                <text x="0" y="7" text-anchor="middle" fill="#F9EAE6" font-family="Georgia, serif" font-style="italic" font-weight="bold" font-size="16">Q</text>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Clean Handwritten Recipient Inscription in Bottom Right -->
+                    <div id="recipient-inscription" class="absolute right-5 bottom-4 pointer-events-none text-right transition-opacity duration-500">
+                        <span class="font-script text-3xl sm:text-4xl text-inkCharcoal/90 block leading-none">
+                            To Emma
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===============================================================
+             BIRTH MONTH PASSCODE MODAL ("DECEMBER")
+             =============================================================== -->
+        <div id="passcode-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center px-4 bg-[#241811]/55 backdrop-blur-sm transition-opacity duration-300">
+            <div id="passcode-card" class="bg-paperCream burnt-border w-full max-w-sm rounded-2xl p-7 sm:p-8 text-inkCharcoal relative text-center">
+                <button id="close-passcode-btn" type="button" aria-label="Close prompt" class="absolute top-3.5 right-3.5 w-9 h-9 rounded-full flex items-center justify-center text-xl text-inkMuted hover:text-inkCharcoal hover:bg-inkCharcoal/5 transition-colors touch-manipulation">
+                    &times;
+                </button>
+
+                <div class="w-11 h-11 mx-auto mb-3.5 rounded-full bg-burgundyWax text-paperCream font-display italic text-xl flex items-center justify-center shadow-sm">
+                    Q
+                </div>
+
+                <h2 class="font-display text-2xl sm:text-3xl font-medium text-inkCharcoal mb-1">
+                    Sealed for Qalbi
+                </h2>
+                <p class="font-body italic text-sm text-inkMuted mb-6">
+                    Enter your birth month to break the seal
+                </p>
+
+                <form id="passcode-form" class="space-y-4">
+                    <div>
+                        <input
+                            id="passcode-input"
+                            type="text"
+                            autocomplete="off"
+                            autocapitalize="words"
+                            enterkeyhint="go"
+                            placeholder="Birth month..."
+                            class="w-full px-4 py-3 rounded-xl bg-[#F5EFE6] border border-[#CBBBA3] text-center font-body text-base text-inkCharcoal placeholder:text-inkMuted/55 focus:outline-none focus:ring-2 focus:ring-burgundyWax/30 focus:border-burgundyWax transition-all"
+                        />
+                        <p id="passcode-error" class="hidden mt-2 text-xs font-body italic text-burgundyWax">
+                            That is not your birth month — try again, Qalbi.
+                        </p>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full py-3.5 px-6 rounded-xl bg-burgundyWax hover:bg-burgundyDeep text-paperCream font-body uppercase tracking-[0.18em] text-xs shadow-md transition-all cursor-pointer touch-manipulation"
+                    >
+                        Break Seal &amp; Read
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===============================================================
+             STAGE 2: UNFOLDED HEIRLOOM PAPER LETTER
+             =============================================================== -->
+        <article id="letter-sheet" class="hidden w-full max-w-2xl stationery-sheet rounded-2xl shadow-sheet px-6 sm:px-12 md:px-16 py-10 sm:py-14 relative overflow-hidden">
+
+            <!-- Subtle Reading Progress Hairline -->
+            <div class="sticky top-0 left-0 right-0 h-[2px] -mx-6 sm:-mx-12 md:-mx-16 -mt-10 sm:-mt-14 mb-8 sm:mb-12 bg-[#3B200E]/10 z-30">
+                <div id="reading-progress" class="h-full w-0 bg-burgundyWax/70 transition-all duration-150"></div>
+            </div>
+
+            <!-- Irregular Charred & Singed Perimeter Frame -->
+            <div class="burnt-svg-frame absolute inset-0 rounded-2xl border-[4px] border-[#361D0C]/80 pointer-events-none z-20"></div>
+            <div class="burnt-svg-frame absolute inset-1.5 rounded-xl border border-[#6E4523]/45 pointer-events-none z-20"></div>
+
+            <!-- Pressed Wilted Dead Rose Resting Gracefully in Top Right Corner -->
+            <svg class="w-20 h-24 sm:w-28 sm:h-32 absolute top-4 right-4 sm:top-6 sm:right-7 opacity-80 pointer-events-none rotate-12" viewBox="0 0 140 160">
+                <path d="M 28 142 Q 52 102, 86 56" stroke="#523E30" stroke-width="2.2" fill="none" stroke-linecap="round" />
+                <path d="M 52 102 L 45 97 L 50 106 Z" fill="#523E30" />
+                <path d="M 68 80 L 75 76 L 70 85 Z" fill="#523E30" />
+                <path d="M 54 98 Q 78 92, 86 104 Q 70 108, 54 101 Z" fill="#5E4C3A" stroke="#3D3125" stroke-width="0.7" />
+                <path d="M 65 82 Q 44 74, 36 86 Q 50 90, 65 85 Z" fill="#524232" stroke="#3D3125" stroke-width="0.7" />
+                <g transform="translate(88, 52) rotate(28)">
+                    <path d="M -20 -4 C -26 -22, -6 -32, 0 -21 C 6 -32, 26 -22, 20 -4 C 22 10, 7 15, 0 14 C -7 15, -22 10, -20 -4 Z" fill="#591C22" stroke="#360D11" stroke-width="0.9" />
+                    <path d="M -13 -5 C -16 -19, -3 -24, 0 -15 C 3 -24, 16 -19, 13 -5 C 13 5, 4 9, 0 8 C -4 9, -13 5, -13 -5 Z" fill="#73242B" stroke="#421015" stroke-width="0.8" />
+                    <path d="M -7 -6 C -8 -14, 8 -14, 7 -6 C 7 1, -7 1, -7 -6 Z" fill="#872B34" />
+                </g>
+                <path d="M 106 88 Q 118 85, 119 94 Q 109 96, 106 88 Z" fill="#692027" />
+            </svg>
+
+            <!-- Letter Body -->
+            <div id="letter-content" class="space-y-6 text-inkCharcoal text-base sm:text-[18.5px] leading-[1.88] font-body relative z-10 break-words">
+
+                <header class="pb-5 border-b border-[#DFD2BE] pr-14 sm:pr-20">
+                    <p class="text-[11px] uppercase tracking-[0.25em] text-burgundyWax font-medium mb-2">
+                        A Final Letter
+                    </p>
+                    <h2 class="font-display italic text-3xl sm:text-4xl text-inkCharcoal font-medium">
+                        To the love of my life,
+                    </h2>
+                </header>
+
+                <p>
+                    <span class="float-left font-display text-5xl sm:text-6xl leading-[0.82] pr-3 pt-1 text-burgundyWax">W</span>ords fail to describe how much hurt I feel reflecting on how we started, what we became, and how we ended. I accept that our ships has set sail and we may never return and set eyes on each other again but my heart will always be with you.
+                </p>
+
+                <p>
+                    I never thought a day would come that I’d feel this much for someone, experience jealousy, and be on this type of emotional rollercoaster. With you, I saw new versions of me. Still feels like an experiment.
+                </p>
+
+                <p>
+                    I take the blame for everything that has happened because time after time you offered me a way out and I didn’t take it, I made us stay even when it was slowly killing us. I can’t fault you for anything, you asked that i speak up but i was scared maybe too egoistic and I tried to swallow the things i ought to have expressed and my heart got poisoned and I changed towards you.
+                </p>
+
+                <p>
+                    Couldn’t bring myself to admit that I’m starting to get extremely jealous when you go out sometimes, I tried to keep it cool even tho I was burning inside and my ego just wouldn’t allow me admit that I’m actually feeling these emotions.
+                </p>
+
+                <p>
+                    Days I’d call and want you to be on facetime and i get excuses, I literally die inside but hell nah, gfb I make it a big deal and be bothered, every single time that happened something in me dies and i knew it but couldn’t speak up, wanna be cool guy as usual.
+                </p>
+
+                <p>
+                    When you went to burj with your friend the other time, the villa visits. I didnt know how to handle the feelings I felt. And my safest option was playing cool, tolerating it and telling myself its not that deep even when i know speaking up may get me a little reassurance.
+                </p>
+
+                <p>
+                    Things i swore i have forgiven you of, i keep remembering them and it made me feel some type of way, and at some point they clouded my head. Ngl, i wish i never went through your phone that night. I couldn't believe you anymore but i didnt care cuz i was happy being with you anyways.
+                </p>
+
+                <p>
+                    Im really sorry for how I treated you in the last phase of our relationship, resentment had taken over, I had lost myself, this hour I love you, the next hour a new feeling takes over, felt like me being borderline again. None of these is your fault and I hate myself for how i treated you.
+                </p>
+
+                <p>
+                    The last one was the final straw for me, when i realized I had lost and finally need to let go before I do go crazy and start physically self harming again. Im sorry it took this long, you didn’t have to deal with my bs, I apologize for always keeping us in a space that repeatedly hurts us, I didn’t know how to let go of you, talking to you hits like a drug that i can’t get enough of. Lord knows I was addicted to you.
+                </p>
+
+                <p>
+                    I tried holding things down till we see again when you back, lol it’s obvious that didn’t work, at some point i felt your heart wasnt with me anymore, I mean Ive been told im not acting like the type you want which is true. I suck at a lot of things in relationships mhenn
+                </p>
+
+                <p>
+                    Somedays im thinking maybe we should have remained friends,but you may leave me to pursue another romantic interest and that would feel like stab would cuz i had fallen for you.
+                </p>
+                
+                 <p>
+If you wish not to speak me again i fully respect that and will live with it
+                </p>
+
+                <!-- Graceful Closing Stanza -->
+                <footer class="mt-8 pt-6 border-t border-[#C4AE8E] space-y-4">
+                    <p class="font-display italic text-xl sm:text-2xl text-inkCharcoal leading-relaxed">
+                         Thank you for setting me free my love,<br>
+                        I wish you all the best in life, especially your love life.<br>
+                        You’re such an amazing person and you made me happy. you gave me the best 7 months of my life.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                        <p class="font-script text-4xl sm:text-5xl text-burgundyWax">
+                            Thank you Emma 💕
+                        </p>
+
+                        <button id="reseal-btn" type="button" class="text-xs font-body italic text-inkMuted hover:text-burgundyWax underline underline-offset-4 transition-colors cursor-pointer touch-manipulation">
+                            Close &amp; seal letter again
+                        </button>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <!-- Minimal Footer -->
+    <footer class="relative z-10 text-center py-5 px-4 text-xs font-body italic text-inkMuted/80">
+        Written with honesty &bull; Letting go with love
+    </footer>
+
+    <script>
+        /**
+         * 1. GENTLE ATMOSPHERE CANVAS (SOFT WINDOW RAIN & SUNLIT DUST)
+         */
+        const canvas = document.getElementById('atmosphere-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let raindrops = [];
+        let dustMotes = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function initAtmosphere() {
+            raindrops = [];
+            dustMotes = [];
+            const rainCount = Math.min(40, Math.floor(width / 28));
+            const moteCount = Math.min(28, Math.floor(width / 36));
+
+            for (let i = 0; i < rainCount; i++) {
+                raindrops.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    len: Math.random() * 14 + 8,
+                    speed: Math.random() * 2.8 + 2.6,
+                    opacity: Math.random() * 0.1 + 0.03
+                });
+            }
+
+            for (let i = 0; i < moteCount; i++) {
+                dustMotes.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 1.8 + 0.7,
+                    vy: -(Math.random() * 0.22 + 0.06),
+                    vx: (Math.random() - 0.5) * 0.2,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function loopAtmosphere() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Subtle rain streaks
+            ctx.lineWidth = 1;
+            for (const r of raindrops) {
+                ctx.strokeStyle = `rgba(122, 102, 84, ${r.opacity})`;
+                ctx.beginPath();
+                ctx.moveTo(r.x, r.y);
+                ctx.lineTo(r.x - 1.2, r.y + r.len);
+                ctx.stroke();
+
+                r.y += r.speed;
+                r.x -= 0.35;
+                if (r.y > height) {
+                    r.y = -20;
+                    r.x = Math.random() * width;
+                }
+            }
+
+            // Warm golden dust motes
+            for (const m of dustMotes) {
+                m.phase += 0.02;
+                m.y += m.vy;
+                m.x += m.vx + Math.sin(m.phase) * 0.15;
+                const alpha = 0.22 + Math.sin(m.phase) * 0.14;
+
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(186, 146, 92, ${Math.max(0.06, alpha)})`;
+                ctx.fill();
+
+                if (m.y < -10) {
+                    m.y = height + 10;
+                    m.x = Math.random() * width;
+                }
+            }
+            requestAnimationFrame(loopAtmosphere);
+        }
+
+        /**
+         * 2. AUTO-PLAY MELANCHOLIC FELT PIANO & SOFT RAIN SOUNDSCAPE
+         */
+        let audioOn = false;
+        let audioInitialized = false;
+        let pianoSynth, rainNoise, rainFilter, chordLoop;
+        const audioBtn = document.getElementById('audio-btn');
+        const audioText = document.getElementById('audio-text');
+        const audioIcon = document.getElementById('audio-icon');
+
+        async function startSadSoundscape() {
+            if (audioOn) return;
+            try {
+                if (typeof Tone === 'undefined') return;
+                await Tone.start();
+                if (!audioInitialized) {
+                    const reverb = new Tone.Reverb({ decay: 5.5, wet: 0.65 }).toDestination();
+
+                    rainFilter = new Tone.Filter(520, 'lowpass').connect(reverb);
+                    rainNoise = new Tone.Noise('pink').connect(rainFilter);
+                    rainNoise.volume.value = -29;
+
+                    pianoSynth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: 'sine' },
+                        envelope: { attack: 0.65, decay: 1.8, sustain: 0.35, release: 3.8 }
+                    }).connect(reverb);
+                    pianoSynth.volume.value = -13;
+
+                    const progression = [
+                        ['D3', 'F3', 'A3', 'E4'],
+                        ['Bb2', 'D3', 'F3', 'A3'],
+                        ['G2', 'Bb2', 'D3', 'F3'],
+                        ['A2', 'E3', 'G3', 'C#4']
+                    ];
+                    let step = 0;
+
+                    chordLoop = new Tone.Loop((time) => {
+                        const chord = progression[step % progression.length];
+                        pianoSynth.triggerAttackRelease(chord, '1m', time);
+                        step++;
+                    }, '1m');
+
+                    audioInitialized = true;
+                }
+
+                rainNoise.start();
+                Tone.Transport.bpm.value = 54;
+                Tone.Transport.start();
+                chordLoop.start(0);
+
+                audioOn = true;
+                audioText.textContent = 'Sound On';
+                audioIcon.classList.remove('opacity-65');
+                audioIcon.classList.add('animate-pulse');
+            } catch (err) {
+                audioText.textContent = 'Tap for Sound';
+            }
+        }
+
+        function stopSadSoundscape() {
+            if (!audioOn) return;
+            try {
+                chordLoop.stop();
+                Tone.Transport.stop();
+                rainNoise.stop();
+            } catch (e) {}
+            audioOn = false;
+            audioText.textContent = 'Sound Off';
+            audioIcon.classList.add('opacity-65');
+            audioIcon.classList.remove('animate-pulse');
+        }
+
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audioOn) {
+                stopSadSoundscape();
+            } else {
+                startSadSoundscape();
+            }
+        });
+
+        ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, () => {
+                if (!audioOn && !audioInitialized) {
+                    startSadSoundscape();
+                }
+            }, { once: true });
+        });
+
+        /**
+         * 3. ENVELOPE OPENING, PASSCODE ("DECEMBER") & 3D LETTER UNFOLDING
+         */
+        const envelopeStage = document.getElementById('envelope-stage');
+        const openEnvelopeBtn = document.getElementById('open-envelope-btn');
+        const waxSeal = document.getElementById('wax-seal');
+        const linenThread = document.getElementById('linen-thread');
+        const deadRoseEnvelope = document.getElementById('dead-rose-envelope');
+        const recipientInscription = document.getElementById('recipient-inscription');
+        const envelopeFlap = document.getElementById('envelope-flap');
+        const innerLetterCard = document.getElementById('inner-letter-card');
+        const letterSheet = document.getElementById('letter-sheet');
+        const letterContent = document.getElementById('letter-content');
+        const readingProgress = document.getElementById('reading-progress');
+        const resealBtn = document.getElementById('reseal-btn');
+
+        const passcodeModal = document.getElementById('passcode-modal');
+        const passcodeCard = document.getElementById('passcode-card');
+        const passcodeForm = document.getElementById('passcode-form');
+        const passcodeInput = document.getElementById('passcode-input');
+        const passcodeError = document.getElementById('passcode-error');
+        const closePasscodeBtn = document.getElementById('close-passcode-btn');
+
+        function playPaperFoley() {
+            if (!audioOn || typeof Tone === 'undefined') return;
+            try {
+                const waxSnap = new Tone.MembraneSynth({
+                    pitchDecay: 0.02,
+                    octaves: 3,
+                    envelope: { attack: 0.002, decay: 0.14, sustain: 0 }
+                }).toDestination();
+                waxSnap.volume.value = -14;
+                waxSnap.triggerAttackRelease('G2', '16n');
+
+                const paperRustle = new Tone.NoiseSynth({
+                    noise: { type: 'white' },
+                    envelope: { attack: 0.12, decay: 0.85, sustain: 0 }
+                }).toDestination();
+                paperRustle.volume.value = -21;
+                paperRustle.triggerAttackRelease('2n', '+0.26');
+            } catch (e) {}
+        }
+
+        function openAndUnfoldLetter() {
+            passcodeModal.classList.add('hidden');
+            playPaperFoley();
+            openEnvelopeBtn.classList.add('pointer-events-none');
+
+            // Step 1: Crack wax seal, fade thread & lift dead rose
+            waxSeal.classList.add('seal-cracked');
+            linenThread.classList.add('opacity-0');
+            recipientInscription.classList.add('opacity-0');
+            deadRoseEnvelope.classList.add('is-lifted');
+
+            // Step 2: Open envelope flap upward in 3D
+            setTimeout(() => {
+                envelopeFlap.classList.add('is-open');
+            }, 300);
+
+            // Step 3: Slide inner stationery sheet up out of envelope
+            setTimeout(() => {
+                innerLetterCard.classList.add('is-rising');
+            }, 680);
+
+            // Step 4: Reveal full unfolded stationery sheet
+            setTimeout(() => {
+                envelopeStage.classList.add('hidden');
+                letterSheet.classList.remove('hidden');
+                letterSheet.classList.add('sheet-unfolding');
+                letterContent.classList.add('letter-stagger');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1250);
+        }
+
+        openEnvelopeBtn.addEventListener('click', () => {
+            startSadSoundscape();
+            passcodeError.classList.add('hidden');
+            passcodeInput.value = '';
+            passcodeModal.classList.remove('hidden');
+            setTimeout(() => passcodeInput.focus(), 100);
+        });
+
+        closePasscodeBtn.addEventListener('click', () => {
+            passcodeModal.classList.add('hidden');
+        });
+
+        passcodeModal.addEventListener('click', (e) => {
+            if (e.target === passcodeModal) {
+                passcodeModal.classList.add('hidden');
+            }
+        });
+
+        // Clear error as soon as she starts typing again & allow Escape to close
+        passcodeInput.addEventListener('input', () => {
+            passcodeError.classList.add('hidden');
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !passcodeModal.classList.contains('hidden')) {
+                passcodeModal.classList.add('hidden');
+            }
+        });
+
+        // Subtle reading progress indicator on scroll
+        window.addEventListener('scroll', () => {
+            if (letterSheet.classList.contains('hidden')) return;
+            const rect = letterSheet.getBoundingClientRect();
+            const totalScrollable = rect.height - window.innerHeight + 160;
+            if (totalScrollable <= 0) {
+                readingProgress.style.width = '100%';
+                return;
+            }
+            const scrolled = Math.min(Math.max(-rect.top + 80, 0), totalScrollable);
+            readingProgress.style.width = `${(scrolled / totalScrollable) * 100}%`;
+        }, { passive: true });
+
+        // Allow closing & re-sealing the envelope to replay the experience
+        resealBtn.addEventListener('click', () => {
+            letterSheet.classList.add('hidden');
+            letterSheet.classList.remove('sheet-unfolding');
+            letterContent.classList.remove('letter-stagger');
+            readingProgress.style.width = '0%';
+
+            waxSeal.classList.remove('seal-cracked');
+            linenThread.classList.remove('opacity-0');
+            recipientInscription.classList.remove('opacity-0');
+            deadRoseEnvelope.classList.remove('is-lifted');
+            envelopeFlap.classList.remove('is-open');
+            innerLetterCard.classList.remove('is-rising');
+            openEnvelopeBtn.classList.remove('pointer-events-none');
+
+            envelopeStage.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        passcodeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const answer = passcodeInput.value.trim().toLowerCase();
+            if (answer === 'december' || answer === '12') {
+                passcodeError.classList.add('hidden');
+                openAndUnfoldLetter();
+            } else {
+                passcodeError.classList.remove('hidden');
+                passcodeCard.classList.remove('shake-error');
+                void passcodeCard.offsetWidth;
+                passcodeCard.classList.add('shake-error');
+                passcodeInput.focus();
+            }
+        });
+
+        window.onload = function () {
+            initAtmosphere();
+            loopAtmosphere();
+            startSadSoundscape();
+        };
+    </script>
+</body>
+</html>
